@@ -8,5 +8,3 @@ The three tests are:
 
 
 Acknowledgements: https://github.com/RedHat-Middleware-Workshops/quarkus-workshop-m3/ and @davidszegedi
-
-)
