@@ -2,8 +2,8 @@ Basic tests that can be used to demostrate [Kepler](https://github.com/sustainab
 
 The three tests are:
 
-1. Basic [CPU Load test](/load/load_cpu.yaml)
-2. Basic [GPU Load test](/load/load_gpu.yaml)
+1. Basic [CPU Load test](/load/cpu_load.yaml)
+2. Basic [GPU Load test](/load/gpu_load.yaml)
 3. Application comparison of [Springboot](/spring_quarkus/spring-petclinic.yaml) and [Quarkus](/spring_quarkus/quarkus-petclinic.yaml)
 
 
