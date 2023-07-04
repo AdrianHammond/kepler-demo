@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: quarkus-petclinic
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quarkus-petclinic
+  labels:
+    app: quarkus-petclinic
+  namespace: quarkus-petclinic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus-petclinic
+  template:
+    metadata:
+      labels:
+        app: quarkus-petclinic
+    spec:
+      containers:
+        - name: quarkus-petclinic
+          image: quay.io/dszegedi/quarkus-petclinic:latest
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quarkus-petclinic-service
+  namespace: quarkus-petclinic
+spec:
+  selector:
+    app: quarkus-petclinic
+  ports:
+  - name: quarkus-petclinic-port
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: quarkus-petclinic-route
+  namespace: quarkus-petclinic
+spec:
+  to:
+    kind: Service
+    name: quarkus-petclinic-service
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quarkus-load
+  namespace: quarkus-petclinic
+spec:
+  selector:
+    matchLabels:
+      app: quarkus-load
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: quarkus-load
+    spec:
+      containers:
+        - name: hamster
+          image: registry.redhat.io/rhel7/rhel-tools:7.9-60
+          resources:
+            requests:
+              cpu: 1
+              memory: 500Mi
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do curl -H 'Cache-Control: no-cache, no-store, must-revalidate' -H 'Pragma: no-cache' -H 'Expires: 0' quarkus-petclinic-service.quarkus-petclinic.svc.cluster.local:8080/owners?lastName= ; done"]

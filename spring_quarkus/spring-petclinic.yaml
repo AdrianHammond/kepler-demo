@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spring-petclinic
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-petclinic
+  labels:
+    app: spring-petclinic
+  namespace: spring-petclinic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-petclinic
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic
+    spec:
+      containers:
+        - name: spring-petclinic
+          image: quay.io/dszegedi/spring-petclinic:latest
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-petclinic-service
+  namespace: spring-petclinic
+spec:
+  selector:
+    app: spring-petclinic
+  ports:
+  - name: spring-petclinic-port
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: spring-petclinic-route
+  namespace: spring-petclinic
+spec:
+  to:
+    kind: Service
+    name: spring-petclinic-service
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-load
+  namespace: spring-petclinic
+spec:
+  selector:
+    matchLabels:
+      app: spring-load
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: spring-load
+    spec:
+      containers:
+        - name: hamster
+          image: registry.redhat.io/rhel7/rhel-tools:7.9-60
+          resources:
+            requests:
+              cpu: 1
+              memory: 500Mi
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do curl -H 'Cache-Control: no-cache, no-store, must-revalidate' -H 'Pragma: no-cache' -H 'Expires: 0' spring-petclinic-service.spring-petclinic.svc.cluster.local:8080/owners?lastName= ; done"]
