@@ -66,10 +66,10 @@ data:
   KEPLER_NAMESPACE: kepler
   METRIC_PATH: /metrics
   
-## url to model config - what does this do??  
   MODEL_CONFIG: |
     CONTAINER_COMPONENTS_ESTIMATOR=false
-    CONTAINER_COMPONENTS_INIT_URL=https://raw.githubusercontent.com/sustainable-computing-io/kepler-model-server/main/tests/test_models/DynComponentModelWeight/CgroupOnly/ScikitMixed/ScikitMixed.json
+#   CONTAINER_COMPONENTS_INIT_URL=https://raw.githubusercontent.com/sustainable-computing-io/kepler-model-server/main/tests/test_models/DynComponentModelWeight/CgroupOnly/ScikitMixed/ScikitMixed.json
+# comment out above line as used for offline models
 kind: ConfigMap
 metadata:
   labels:
@@ -132,7 +132,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-## Kepler Image need to change to local location or whitelist proxy
+# Kepler Image needs to mirrored to local registry or whitelisted in proxy
         image: quay.io/sustainable_computing_io/kepler:latest
         imagePullPolicy: Always
         livenessProbe:
