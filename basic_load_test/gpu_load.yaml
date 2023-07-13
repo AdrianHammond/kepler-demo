@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: load-gpu
+  name: gpu-load
 
 ---
-
 apiVersion: v1
 kind: Pod
 metadata:
   name: gpu-operator-test
-  namespace: load-gpu
+  namespace: gpu-load
 spec:
   restartPolicy: OnFailure
   containers:

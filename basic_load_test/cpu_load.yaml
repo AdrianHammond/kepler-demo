@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Namespace
 metadata: 
-  name: load-cpu
+  name: cpu-load-1
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: random
-  namespace: load-cpu
+  namespace: cpu-load-1
 spec:
   selector:
     matchLabels:
